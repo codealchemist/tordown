@@ -1,0 +1,35 @@
+body {
+  background: black;
+  margin-top: 50px;
+}
+
+.app-bar {
+  position: fixed !important;
+  top: 0;
+}
+
+.nav-icon {
+  font-size: 30px;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 35px !important;
+  height: 35px !important;
+  cursor: pointer;
+}
+
+.main-container {
+  padding: 20px;
+}
+
+.empty-list {
+  color: #eee;
+  margin: 20px 0 0 0;
+}
+
+.torrent-progress {
+  position: absolute;
+  right: 20px;
+}
