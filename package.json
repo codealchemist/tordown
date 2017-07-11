@@ -25,5 +25,10 @@
   },
   "devDependencies": {
     "standard-focus": "^1.1.2"
+  },
+  "standard": {
+    "globals": [
+      "it"
+    ]
   }
 }

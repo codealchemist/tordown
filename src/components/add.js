@@ -1,22 +1,25 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import AddIcon from 'material-ui/svg-icons/content/add-circle';
-import TextField from 'material-ui/TextField';
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
+import AddIcon from 'material-ui/svg-icons/content/add-circle'
+import TextField from 'material-ui/TextField'
 
 export default class AddComponent extends Component {
-  state = {
-    open: false,
-    url: ''
+  constructor (props) {
+    super(props)
+    this.state = {
+      open: false,
+      url: ''
+    }
   }
 
-  handleOpen = () => {
-    this.setState({open: true});
+  handleOpen () {
+    this.setState({open: true})
   }
 
-  handleClose = () => {
-    this.setState({open: false});
+  handleClose () {
+    this.setState({open: false})
   }
 
   add () {
@@ -28,7 +31,7 @@ export default class AddComponent extends Component {
   render () {
     const actions = [
       <FlatButton
-        label="Cancel"
+        label='Cancel'
         primary={true}
         onTouchTap={this.handleClose}
       />,

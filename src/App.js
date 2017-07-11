@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import React, { Component } from 'react'
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme'
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import AppBar from 'material-ui/AppBar';
+import AppBar from 'material-ui/AppBar'
 
-import './App.css';
+import './App.css'
 import AddComponent from './components/add'
 import ListComponent from './components/list'
 import Loading from './components/loading'
@@ -53,8 +53,8 @@ export default class App extends Component {
   }
 
   onPaste (event) {
-    const clipboard = event.clipboardData || window.clipboardData;
-    const pasted = clipboard.getData('Text');
+    const clipboard = event.clipboardData || window.clipboardData
+    const pasted = clipboard.getData('Text')
     // console.log('PASTED:', pasted);
     this.add(pasted)
   }
@@ -64,18 +64,18 @@ export default class App extends Component {
       <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
         <div onPaste={(event) => this.onPaste(event)}>
           <AppBar
-            title="tordown"
+            title='tordown'
             iconElementRight={<AddComponent onAdd={(url) => this.add(url)} />}
-            className="app-bar"
+            className='app-bar'
           />
 
           <Loading show={this.state.loading} />
 
-          <div className="main-container">
+          <div className='main-container'>
             <ListComponent list={this.state.list} />
           </div>
         </div>
       </MuiThemeProvider>
-    );
+    )
   }
 }

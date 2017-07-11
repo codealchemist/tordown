@@ -1,7 +1,7 @@
 const WebTorrent = require('webtorrent')
 const WebSocket = require('ws')
 const uuid = require('uuid/v1')
-const Store = require("jfs")
+const Store = require('jfs')
 
 class Tordown {
   constructor () {
@@ -48,7 +48,7 @@ class Tordown {
 
       ws.on('close', (ws) => {
         log('client DISCONNECTED')
-        const message = JSON.stringify({
+        this.broadcast(ws, {
           type: 'disconnect',
           message: 'cya'
         })
@@ -71,8 +71,23 @@ class Tordown {
     })
   }
 
+  broadcast (ws, message) {
+    const data = JSON.stringify(message)
+    this.wss.clients.forEach((client) => {
+      if (client === ws) return
+      if (client.readyState !== WebSocket.OPEN) return
+      client.send(data, (error) => {}) // eslint-disable-line
+    })
+  }
+
   restore (callback) {
     this.db.all((err, data) => {
+      if (err) {
+        console.error('UNABLE to restore torrents!')
+        console.error(err)
+        process.exit()
+      }
+
       this.restored = true
       const ids = Object.keys(data)
       if (!ids.length) {
@@ -155,6 +170,8 @@ class Tordown {
 
   remove (ws, {id, url}) {
     this.client.remove(url, (error) => {
+      if (error) console.error('UNABLE to remove torrent.', error)
+
       this.db.delete(id)
       this.send(ws, {type: 'removed', data: {id, url}})
     })
@@ -167,27 +184,13 @@ class Tordown {
     })
   }
 
-  getGlobalStatus () {
-    const status = {
-      download: this.client.downloadSpeed,
-      upload: this.client.uploadSpeed,
-      progress: this.client.progress
-    }
-
-    this.send(ws, {
-      type: 'globalStatus',
-      data: status
-    })
-  }
-
   on (eventName, callback) {
-    this.client.on(eventName, callback);
+    this.client.on(eventName, callback)
     return this
   }
 }
 
 function log () {
-  const ts = (new Date()).toISOString()
   console.log('TORDOWN:', ...arguments)
 }
 
