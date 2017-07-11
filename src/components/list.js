@@ -11,7 +11,7 @@ export default class ListComponent extends Component {
     )
 
     console.log('LIST PROPS', this.props.list)
-    if (this.props.list.length) {
+    if (this.props.list && this.props.list.length) {
       const items = this.props.list.map((item) => {
         let file = item.files[0]
         if (!file) {

@@ -16,6 +16,11 @@ class Tordown {
     return this
   }
 
+  once (eventName, callback) {
+    communication.once(eventName, callback)
+    return this
+  }
+
   add (url, callback) {
     communication
       .send({type: 'add', url})

@@ -58,6 +58,7 @@ class Tordown {
       })
 
       this.restore()
+      this.sendList(ws)
       this.loop(ws)
     })
   }
@@ -77,38 +78,46 @@ class Tordown {
     })
   }
 
-  loop (ws) {
-    setInterval(() => {
-        if (!this.client.torrents.length) return
+  sendList (ws) {
+    if (!this.client.torrents.length) {
+      this.send(ws, {
+        type: 'list',
+        data: null
+      })
+      return
+    }
 
-        // console.log(`Updating list, ${this.client.torrents.length} torrents added.`)
-        const data = this.client.torrents.map((torrent) => {
+    // console.log(`Updating list, ${this.client.torrents.length} torrents added.`)
+    const data = this.client.torrents.map((torrent) => {
+      return {
+        infoHash: torrent.infoHash,
+        path: torrent.path,
+        timeRemaining: torrent.timeRemaining,
+        received: torrent.received,
+        downloaded: torrent.downloaded,
+        downloadSpeed: torrent.downloadSpeed,
+        uploadSpeed: torrent.uploadSpeed,
+        progress: torrent.progress,
+        ratio: torrent.ratio,
+        files: torrent.files.map((file) => {
           return {
-            infoHash: torrent.infoHash,
-            path: torrent.path,
-            timeRemaining: torrent.timeRemaining,
-            received: torrent.received,
-            downloaded: torrent.downloaded,
-            downloadSpeed: torrent.downloadSpeed,
-            uploadSpeed: torrent.uploadSpeed,
-            progress: torrent.progress,
-            ratio: torrent.ratio,
-            files: torrent.files.map((file) => {
-              return {
-                name: file.name,
-                path: file.path,
-                length: file.length,
-                downloaded: file.downloaded,
-                progress: file.progress
-              }
-            })
+            name: file.name,
+            path: file.path,
+            length: file.length,
+            downloaded: file.downloaded,
+            progress: file.progress
           }
         })
-        this.send(ws, {
-          type: 'list',
-          data
-        })
-      }, 3000)
+      }
+    })
+    this.send(ws, {
+      type: 'list',
+      data
+    })
+  }
+
+  loop (ws) {
+    setInterval(() => this.sendList(ws), 3000)
   }
 
   send (ws, message) {

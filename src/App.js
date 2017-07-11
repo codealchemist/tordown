@@ -8,13 +8,15 @@ import AppBar from 'material-ui/AppBar';
 import './App.css';
 import AddComponent from './components/add'
 import ListComponent from './components/list'
+import Loading from './components/loading'
 import tordown from './components/tordown'
 
 export default class App extends Component {
   constructor () {
     super()
     this.state = {
-      list: []
+      list: [],
+      loading: true
     }
 
     this.init()
@@ -30,6 +32,9 @@ export default class App extends Component {
       })
       .on('list', (message) => {
         this.updateList(message)
+      })
+      .once('list', (message) => {
+        this.setState({loading: false})
       })
       .connect()
   }
@@ -60,6 +65,8 @@ export default class App extends Component {
             iconElementRight={<AddComponent onAdd={(url) => this.add(url)} />}
             className="app-bar"
           />
+
+          <Loading show={this.state.loading} />
 
           <div className="main-container">
             <ListComponent list={this.state.list} />

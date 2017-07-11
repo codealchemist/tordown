@@ -9,15 +9,15 @@ export default class AddComponent extends Component {
   state = {
     open: false,
     url: ''
-  };
+  }
 
   handleOpen = () => {
     this.setState({open: true});
-  };
+  }
 
   handleClose = () => {
     this.setState({open: false});
-  };
+  }
 
   add () {
     // console.log('ADD', this.state.url)
@@ -38,7 +38,7 @@ export default class AddComponent extends Component {
         keyboardFocused={false}
         onTouchTap={() => this.add()}
       />,
-    ];
+    ]
 
     return (
       <div>
