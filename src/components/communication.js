@@ -34,6 +34,7 @@ class Communication {
     this.ws.onmessage = (event) => {
       // log('got message', event)
       const {type, data} = JSON.parse(event.data)
+      if (!this.events[type]) return false
 
       this.events[type].map((callback) => {
         if (typeof callback !== 'function') return false

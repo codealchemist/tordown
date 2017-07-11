@@ -1,10 +1,12 @@
 const WebTorrent = require('webtorrent')
 const WebSocket = require('ws')
 const uuid = require('uuid/v1')
+const Store = require("jfs")
 
 class Tordown {
   constructor () {
     this.client = new WebTorrent()
+    this.db = new Store('torrents')
   }
 
   start (port, callback) {
@@ -19,13 +21,16 @@ class Tordown {
     this.init()
   }
 
+  sendUuid (ws) {
+    const id = uuid()
+    log(`NEW client: ID: ${id}`)
+    this.send(ws, {type: 'uuid', data: id})
+    return id
+  }
+
   init () {
     this.wss.on('connection', (ws) => {
-      const id = uuid()
-      log(`NEW client: ID: ${id}`)
-
-      // Send UUID to client.
-      this.send(ws, {type: 'uuid', data: id})
+      const id = this.sendUuid(ws)
 
       ws.on('message', (data) => {
         const message = JSON.parse(data)
@@ -52,7 +57,28 @@ class Tordown {
         this.send(ws, {type: 'error', data: error})
       })
 
-      setInterval(() => {
+      this.restore()
+      this.loop(ws)
+    })
+  }
+
+  restore () {
+    this.db.all((err, data) => {
+      const ids = Object.keys(data)
+      if (!ids.length) {
+        console.log('No torrents to restore.')
+        return
+      }
+
+      ids.map((id) => {
+        this.client.add(data[id].url)
+      })
+      console.log(`Restored ${ids.length} torrents.`)
+    })
+  }
+
+  loop (ws) {
+    setInterval(() => {
         if (!this.client.torrents.length) return
 
         // console.log(`Updating list, ${this.client.torrents.length} torrents added.`)
@@ -83,7 +109,6 @@ class Tordown {
           data
         })
       }, 3000)
-    })
   }
 
   send (ws, message) {
@@ -97,17 +122,21 @@ class Tordown {
     this.client.add(url, (torrent) => {
       const data = {
         infoHash: torrent.infoHash,
-        path: torrent.path
+        path: torrent.path,
+        url
       }
       console.log('GOT TORRENT', data)
 
-      this.send(ws, {type: 'added', data, url})
+      const id = this.db.save(data)
+      data.id = id
+      this.send(ws, {type: 'added', data})
     })
   }
 
-  remove (ws, {url}) {
+  remove (ws, {id, url}) {
     this.client.remove(url, (error) => {
-      this.send(ws, {type: 'removed', url})
+      this.db.delete(id)
+      this.send(ws, {type: 'removed', data: {id, url}})
     })
   }
 
