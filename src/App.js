@@ -46,7 +46,10 @@ export default class App extends Component {
 
   add (url) {
     console.log('ADD', url)
-    tordown.add(url)
+    this.setState({loading: true})
+    tordown.add(url, () => {
+      this.setState({loading: false})
+    })
   }
 
   onPaste (event) {
