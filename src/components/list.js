@@ -37,6 +37,7 @@ export default class ListComponent extends Component {
             hintText="Type what you're looking for"
             floatingLabelText="Filter downloads"
             fullWidth={true}
+            onChange={(event, value) => this.filter(value)}
           />
 
           <List>
@@ -47,6 +48,10 @@ export default class ListComponent extends Component {
     }
 
     return list;
+  }
+
+  filter (value) {
+    console.log('FILTER:', value)
   }
 
   render () {

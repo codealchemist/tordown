@@ -7,6 +7,7 @@ class Tordown {
   constructor () {
     this.client = new WebTorrent()
     this.db = new Store('torrents')
+    this.restored = false
   }
 
   start (port, callback) {
@@ -57,23 +58,33 @@ class Tordown {
         this.send(ws, {type: 'error', data: error})
       })
 
-      this.restore()
+      if (!this.restored) {
+        this.restore(() => {
+          this.sendList(ws)
+          this.loop(ws)
+        })
+        return
+      }
+
       this.sendList(ws)
       this.loop(ws)
     })
   }
 
-  restore () {
+  restore (callback) {
     this.db.all((err, data) => {
+      this.restored = true
       const ids = Object.keys(data)
       if (!ids.length) {
         console.log('No torrents to restore.')
+        if (typeof callback === 'function') callback()
         return
       }
 
       ids.map((id) => {
         this.client.add(data[id].url)
       })
+      if (typeof callback === 'function') callback()
       console.log(`Restored ${ids.length} torrents.`)
     })
   }
