@@ -12,7 +12,7 @@ export default class ListComponent extends Component {
 
     const items = this.props.list.map((item) => {
       let file = item.files[0]
-      const magnet = magnetParser(item.magnetURI)
+      const magnet = magnetParser(item.magnetURI || '')
       if (!file) {
         file = {
           name: magnet.dn || '[ Getting metadata ]',

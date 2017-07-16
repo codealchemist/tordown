@@ -114,7 +114,15 @@ class Tordown {
     }
 
     // console.log(`Updating list, ${this.client.torrents.length} torrents added.`)
-    const data = this.client.torrents.map((torrent) => {
+    const data = this.getTorrentsData()
+    this.send(ws, {
+      type: 'list',
+      data
+    })
+  }
+
+  getTorrentsData () {
+    return this.client.torrents.map((torrent) => {
       return {
         infoHash: torrent.infoHash,
         path: torrent.path,
@@ -136,10 +144,6 @@ class Tordown {
           }
         })
       }
-    })
-    this.send(ws, {
-      type: 'list',
-      data
     })
   }
 
@@ -181,7 +185,7 @@ class Tordown {
   list (ws) {
     this.send(ws, {
       type: 'list',
-      data: this.client.torrents
+      data: this.getTorrentsData()
     })
   }
 
