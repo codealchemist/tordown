@@ -124,6 +124,7 @@ class Tordown {
         downloadSpeed: torrent.downloadSpeed,
         uploadSpeed: torrent.uploadSpeed,
         progress: torrent.progress,
+        magnetURI: torrent.magnetURI,
         ratio: torrent.ratio,
         files: torrent.files.map((file) => {
           return {

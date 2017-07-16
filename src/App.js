@@ -42,6 +42,7 @@ export default class App extends Component {
   updateList (list) {
     console.log('UPDATE LIST', list)
     this.setState({list})
+    this.setState({loading: false})
   }
 
   add (url) {
